@@ -1,0 +1,80 @@
+[Sun Nov  1 19:28:59 2026
+] Producer produced: 1
+[Sun Nov  1 19:28:59 2026
+] Consumer consumed: 1
+[Sun Nov  1 19:29:01 2026
+] Producer produced: 2
+[Sun Nov  1 19:29:01 2026
+] Consumer consumed: 2
+[Sun Nov  1 19:29:02 2026
+] Producer produced: 3
+[Sun Nov  1 19:29:03 2026
+] Producer produced: 4
+[Sun Nov  1 19:29:03 2026
+] Consumer consumed: 3
+[Sun Nov  1 19:29:04 2026
+] Producer produced: 5
+[Sun Nov  1 19:29:05 2026
+] Producer produced: 6
+[Sun Nov  1 19:29:05 2026
+] Consumer consumed: 4
+[Sun Nov  1 19:29:06 2026
+] Producer produced: 7
+[Sun Nov  1 19:29:07 2026
+] Producer produced: 8
+[Sun Nov  1 19:29:07 2026
+] Consumer consumed: 5
+[Sun Nov  1 19:29:08 2026
+] Producer produced: 9
+[Sun Nov  1 19:29:09 2026
+] Producer produced: 10
+[Sun Nov  1 19:29:09 2026
+] Consumer consumed: 6
+[Sun Nov  1 19:29:11 2026
+] Consumer consumed: 7
+[Sun Nov  1 19:29:14 2026
+] Consumer consumed: 8
+[Sun Nov  1 19:29:16 2026
+] Consumer consumed: 9
+[Sun Nov  1 19:29:18 2026
+] Consumer consumed: 10
+[Sun Nov  1 19:35:00 2026] Producer produced: 1
+[Sun Nov  1 19:35:00 2026] Consumer consumed: 1
+[Sun Nov  1 19:35:01 2026] Producer produced: 2
+[Sun Nov  1 19:35:02 2026] Consumer consumed: 2
+[Sun Nov  1 19:35:02 2026] Producer produced: 3
+[Sun Nov  1 19:35:03 2026] Producer produced: 4
+[Sun Nov  1 19:35:04 2026] Consumer consumed: 3
+[Sun Nov  1 19:35:04 2026] Producer produced: 5
+[Sun Nov  1 19:35:06 2026] Producer produced: 6
+[Sun Nov  1 19:35:07 2026] Producer produced: 7
+[Sun Nov  1 19:35:07 2026] Consumer consumed: 4
+[Sun Nov  1 19:35:08 2026] Producer produced: 8
+[Sun Nov  1 19:35:09 2026] Producer produced: 9
+[Sun Nov  1 19:35:09 2026] Consumer consumed: 5
+[Sun Nov  1 19:35:10 2026] Producer produced: 10
+[Sun Nov  1 19:35:11 2026] Consumer consumed: 6
+[Sun Nov  1 19:35:13 2026] Consumer consumed: 7
+[Sun Nov  1 19:35:15 2026] Consumer consumed: 8
+[Sun Nov  1 19:35:17 2026] Consumer consumed: 9
+[Sun Nov  1 19:35:19 2026] Consumer consumed: 10
+[Tue Nov 10 16:46:14 2026] Producer produced: 1
+[Tue Nov 10 16:46:14 2026] Consumer consumed: 1
+[Tue Nov 10 16:46:15 2026] Producer produced: 2
+[Tue Nov 10 16:46:16 2026] Consumer consumed: 2
+[Tue Nov 10 16:46:16 2026] Producer produced: 3
+[Tue Nov 10 16:46:17 2026] Producer produced: 4
+[Tue Nov 10 16:46:18 2026] Consumer consumed: 3
+[Tue Nov 10 16:46:18 2026] Producer produced: 5
+[Tue Nov 10 16:46:19 2026] Producer produced: 6
+[Tue Nov 10 16:46:20 2026] Consumer consumed: 4
+[Tue Nov 10 16:46:20 2026] Producer produced: 7
+[Tue Nov 10 16:46:21 2026] Producer produced: 8
+[Tue Nov 10 16:46:22 2026] Consumer consumed: 5
+[Tue Nov 10 16:46:22 2026] Producer produced: 9
+[Tue Nov 10 16:46:23 2026] Producer produced: 10
+[Tue Nov 10 16:46:24 2026] Consumer consumed: 6
+[Tue Nov 10 16:46:26 2026] Consumer consumed: 7
+[Tue Nov 10 16:46:28 2026] Consumer consumed: 8
+[Tue Nov 10 16:46:30 2026] Consumer consumed: 9
+[Tue Nov 10 16:46:32 2026] Consumer consumed: 10
