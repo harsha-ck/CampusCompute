@@ -137,3 +137,4 @@ else
     printf("Shared memory and semaphore cleaned up!\n");
 }
 
+}
