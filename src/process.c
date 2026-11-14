@@ -3,35 +3,43 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-
+#include <errno.h>
 #include "process.h"
-void run_process_demo(void)
+void run_worker(const char *worker_name, int simulate_failure)
 {
     pid_t pid;
     int status;
 
-    printf("\n========== PROCESS MANAGEMENT DEMO ==========\n");
+    printf("\n========== %s ==========\n", worker_name);
 
     // Create child process
     pid = fork();
 
-    if(pid < 0)
+    if (pid < 0)
     {
         perror("fork failed");
         return;
     }
 
     // Child process
-    if(pid == 0)
+    if (pid == 0)
     {
-        printf("\nChild Process:\n");
+        printf("Child Process:\n");
         printf("Child PID: %d\n", getpid());
         printf("Parent PID: %d\n", getppid());
 
-        printf("Child process executing successfully.\n");
+        if (simulate_failure)
+        {
+            printf("Child simulating controlled failure.\n");
 
-        printf("Child process simulating failure...\n");
-        exit(0);
+            // Simulated failure: non-zero exit
+            exit(1);
+        }
+        else
+        {
+            printf("Child executing successfully.\n");
+            exit(0);
+        }
     }
 
     // Parent process
@@ -42,19 +50,50 @@ void run_process_demo(void)
         printf("Created Child PID: %d\n", pid);
 
         // Wait for child process
-        waitpid(pid, &status, 0);
-
-        if(WIFEXITED(status))
+        while (waitpid(pid, &status, 0) == -1)
         {
-            printf("\nChild exited with status: %d\n",
-                   WEXITSTATUS(status));
+            if (errno != EINTR)
+            {
+                perror("waitpid failed");
+                return;
+            }
         }
-        else
+
+        // Check child termination status
+        if (WIFEXITED(status))
         {
-            printf("\nChild terminated abnormally.\n");
+            int exit_code = WEXITSTATUS(status);
+
+            printf("Child exited with status: %d\n", exit_code);
+
+            if (exit_code == 0)
+            {
+                printf("Worker completed successfully.\n");
+            }
+            else
+            {
+                printf("Worker failure detected!\n");
+                printf("Failure exit code: %d\n", exit_code);
+            }
+        }
+        else if (WIFSIGNALED(status))
+        {
+            printf("Child terminated by signal: %d\n",
+                   WTERMSIG(status));
         }
 
         printf("Parent process completed successfully.\n");
     }
 }
 
+
+void run_process_demo(void)
+{
+    printf("\n========== PROCESS MANAGEMENT DEMO ==========\n");
+
+    // Test 1: Normal child completion
+    run_worker("NORMAL WORKER TEST", 0);
+
+    // Test 2: Controlled simulated failure
+    run_worker("SIMULATED FAILURE TEST", 1);
+}
