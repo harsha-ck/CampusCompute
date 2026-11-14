@@ -16,8 +16,7 @@ typedef struct
     int status;
 
 } Job;
-
-void create_jobs(Job jobs[], int n);
+int create_jobs(Job jobs[], int n);
 void display_jobs(Job jobs[], int n);
 
 #endif

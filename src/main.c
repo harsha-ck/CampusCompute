@@ -6,7 +6,8 @@
 #include "../include/banker.h"
 #include "../include/process.h"
 #include "../include/resource.h"
-int main()
+
+int main(void)
 {
     int n;
 
@@ -16,52 +17,56 @@ int main()
 
     printf("\nEnter number of jobs: ");
 
-    if(scanf("%d", &n) != 1 || n <= 0)
+    if(scanf("%d", &n) != 1 || n <= 0 || n > 99)
     {
-        printf("Invalid number of jobs!\n");
+        printf("Invalid number of jobs! Enter a value between 1 and 99.\n");
         return 1;
     }
 
     Job jobs[n];
 
-    create_jobs(jobs, n);
+    if(!create_jobs(jobs, n))
+    {
+        printf("Job creation failed. Exiting program.\n");
+        return 1;
+    }
 
     display_jobs(jobs, n);
 
     int quantum;
 
-printf("\nEnter Time Quantum: ");
-scanf("%d", &quantum);
+    printf("\nEnter Time Quantum: ");
 
-if(quantum <= 0)
-{
-    printf("Invalid time quantum!\n");
-    return 1;
-}
-SchedulingResult fcfs_result;
-SchedulingResult rr_result;
-SchedulingResult priority_result;
+    if(scanf("%d", &quantum) != 1 || quantum <= 0)
+    {
+        printf("Invalid time quantum! Enter a positive integer.\n");
+        return 1;
+    }
 
-fcfs_result = fcfs_schedule(jobs, n);
+    SchedulingResult fcfs_result;
+    SchedulingResult rr_result;
+    SchedulingResult priority_result;
 
-rr_result = round_robin_schedule(jobs, n, quantum);
+    fcfs_result = fcfs_schedule(jobs, n);
+    rr_result = round_robin_schedule(jobs, n, quantum);
+    priority_result = priority_schedule(jobs, n);
 
-priority_result = priority_schedule(jobs, n);
+    compare_scheduling(fcfs_result, rr_result, priority_result);
 
-compare_scheduling(fcfs_result, rr_result, priority_result);
+    // FR3 - Producer Consumer
+    run_producer_consumer();
 
-run_producer_consumer();
+    // FR4 - Shared Memory and Semaphore
+    run_shared_memory_demo();
 
-run_shared_memory_demo();
+    // FR5 - Banker's Algorithm
+    run_bankers_demo();
 
-// FR5 - Banker's Algorithm
-run_bankers_demo();
+    // FR6 - Process Management
+    run_process_demo();
 
-// FR6 - Process Management
-run_process_demo();
+    // FR7 - Resource Management
+    run_resource_demo();
 
-// FR7 - Resource Management
-run_resource_demo();
-
-return 0;
+    return 0;
 }

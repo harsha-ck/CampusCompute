@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include "banker.h"
 
-
 // Function to execute Banker's Safety Algorithm
 void check_safety(
     int n,
@@ -13,17 +12,12 @@ void check_safety(
     const char *test_name)
 {
     int need[MAX_PROCESSES][MAX_RESOURCES];
-
     int work[MAX_RESOURCES];
-
     bool finish[MAX_PROCESSES] = {false};
-
     int safe_sequence[MAX_PROCESSES];
-
     int count = 0;
 
     printf("\n========== %s ==========\n", test_name);
-
 
     // Calculate Need matrix
     for (int i = 0; i < n; i++)
@@ -34,13 +28,11 @@ void check_safety(
         }
     }
 
-
     // Copy Available into Work
     for (int j = 0; j < m; j++)
     {
         work[j] = available[j];
     }
-
 
     // Banker's Safety Algorithm
     while (count < n)
@@ -67,9 +59,7 @@ void check_safety(
                     }
 
                     safe_sequence[count++] = i;
-
                     finish[i] = true;
-
                     found = true;
                 }
             }
@@ -79,12 +69,10 @@ void check_safety(
             break;
     }
 
-
     // Display result
     if (count == n)
     {
         printf("\nSystem is in SAFE state.\n");
-
         printf("Safe Sequence: ");
 
         for (int i = 0; i < n; i++)
@@ -100,19 +88,15 @@ void check_safety(
     else
     {
         printf("\nSystem is in UNSAFE state.\n");
-
         printf("No safe sequence exists.\n");
     }
 }
-
-
 
 // Main Banker's Algorithm demonstration
 void run_bankers_demo(void)
 {
     int n = 5;
     int m = 3;
-
 
     // Allocation Matrix
     int allocation[MAX_PROCESSES][MAX_RESOURCES] = {
@@ -123,7 +107,6 @@ void run_bankers_demo(void)
         {0, 0, 2}
     };
 
-
     // Maximum Matrix
     int maximum[MAX_PROCESSES][MAX_RESOURCES] = {
         {7, 5, 3},
@@ -132,7 +115,6 @@ void run_bankers_demo(void)
         {2, 2, 2},
         {4, 3, 3}
     };
-
 
     // TEST 1: SAFE STATE
     int available_safe[MAX_RESOURCES] = {3, 3, 2};
@@ -144,7 +126,6 @@ void run_bankers_demo(void)
         available_safe,
         "BANKER'S SAFE STATE TEST"
     );
-
 
     // TEST 2: UNSAFE STATE
     int available_unsafe[MAX_RESOURCES] = {0, 0, 0};
