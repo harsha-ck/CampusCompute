@@ -3,6 +3,9 @@
 #include "../include/scheduler.h"
 #include "../include/producer_consumer.h"
 #include "../include/ipc.h"
+#include "../include/banker.h"
+#include "../include/process.h"
+#include "../include/resource.h"
 int main()
 {
     int n;
@@ -46,7 +49,19 @@ rr_result = round_robin_schedule(jobs, n, quantum);
 priority_result = priority_schedule(jobs, n);
 
 compare_scheduling(fcfs_result, rr_result, priority_result);
+
 run_producer_consumer();
+
 run_shared_memory_demo();
-    return 0;
+
+// FR5 - Banker's Algorithm
+run_bankers_demo();
+
+// FR6 - Process Management
+run_process_demo();
+
+// FR7 - Resource Management
+run_resource_demo();
+
+return 0;
 }
