@@ -30,7 +30,6 @@ void run_process_demo(void)
 
         printf("Child process executing successfully.\n");
 
-        printf("Child process simulating failure...\n");
         exit(0);
     }
 
