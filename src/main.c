@@ -3,6 +3,9 @@
 #include "../include/scheduler.h"
 #include "../include/producer_consumer.h"
 #include "../include/ipc.h"
+#include "../include/banker.h"
+#include "../include/process.h"
+#include "../include/resource.h"
 int main()
 {
     int n;
@@ -13,26 +16,29 @@ int main()
 
     printf("\nEnter number of jobs: ");
 
-    if(scanf("%d", &n) != 1 || n <= 0)
-    {
-        printf("Invalid number of jobs!\n");
-        return 1;
-    }
+    if(scanf("%d", &n) != 1 || n <= 0 || n > 99)
+{
+    printf("Invalid number of jobs! Enter a value between 1 and 99.\n");
+    return 1;
+}
 
     Job jobs[n];
 
-    create_jobs(jobs, n);
+    if(!create_jobs(jobs, n))
+{
+    printf("Job creation failed. Exiting program.\n");
+    return 1;
+}
 
     display_jobs(jobs, n);
 
     int quantum;
 
 printf("\nEnter Time Quantum: ");
-scanf("%d", &quantum);
 
-if(quantum <= 0)
+if(scanf("%d", &quantum) != 1 || quantum <= 0)
 {
-    printf("Invalid time quantum!\n");
+    printf("Invalid time quantum! Enter a positive integer.\n");
     return 1;
 }
 SchedulingResult fcfs_result;
@@ -48,5 +54,10 @@ priority_result = priority_schedule(jobs, n);
 compare_scheduling(fcfs_result, rr_result, priority_result);
 run_producer_consumer();
 run_shared_memory_demo();
-    return 0;
+
+run_bankers_demo();
+run_process_demo();
+run_resource_demo();
+
+return 0;
 }

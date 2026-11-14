@@ -106,4 +106,66 @@ void run_bankers_demo(void)
         printf("\nSystem is in UNSAFE state.\n");
         printf("No safe sequence exists.\n");
     }
+    // Second test: deliberately create an unsafe state
+    printf("\n--- UNSAFE STATE TEST ---\n");
+
+    int unsafe_available[MAX_RESOURCES] = {0, 0, 0};
+
+    // Reset the safety algorithm variables
+    count = 0;
+
+    for(int i = 0; i < n; i++)
+    {
+        finish[i] = false;
+    }
+
+    for(int j = 0; j < m; j++)
+    {
+        work[j] = unsafe_available[j];
+    }
+
+    // Run safety algorithm again
+    while(count < n)
+    {
+        bool found = false;
+
+        for(int i = 0; i < n; i++)
+        {
+            if(!finish[i])
+            {
+                int j;
+
+                for(j = 0; j < m; j++)
+                {
+                    if(need[i][j] > work[j])
+                        break;
+                }
+
+                if(j == m)
+                {
+                    for(int k = 0; k < m; k++)
+                    {
+                        work[k] += allocation[i][k];
+                    }
+
+                    safe_sequence[count++] = i;
+                    finish[i] = true;
+                    found = true;
+                }
+            }
+        }
+
+        if(!found)
+            break;
+    }
+
+    if(count == n)
+    {
+        printf("System is in SAFE state.\n");
+    }
+    else
+    {
+        printf("System is in UNSAFE state.\n");
+        printf("No safe sequence exists.\n");
+    }
 }

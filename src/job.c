@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "../include/job.h"
 
-void create_jobs(Job jobs[], int n)
+int create_jobs(Job jobs[], int n)
 {
     for(int i = 0; i < n; i++)
     {
@@ -10,13 +10,28 @@ void create_jobs(Job jobs[], int n)
         jobs[i].id = i + 1;
 
         printf("Arrival Time: ");
-        scanf("%d", &jobs[i].arrival_time);
+        if(scanf("%d", &jobs[i].arrival_time) != 1 ||
+           jobs[i].arrival_time < 0)
+        {
+            printf("Invalid arrival time! Enter a non-negative integer.\n");
+            return 0;
+        }
 
         printf("Burst Time: ");
-        scanf("%d", &jobs[i].burst_time);
+        if(scanf("%d", &jobs[i].burst_time) != 1 ||
+           jobs[i].burst_time <= 0)
+        {
+            printf("Invalid burst time! Enter a positive integer.\n");
+            return 0;
+        }
 
         printf("Priority: ");
-        scanf("%d", &jobs[i].priority);
+        if(scanf("%d", &jobs[i].priority) != 1 ||
+           jobs[i].priority < 0)
+        {
+            printf("Invalid priority! Enter a non-negative integer.\n");
+            return 0;
+        }
 
         jobs[i].remaining_time = jobs[i].burst_time;
         jobs[i].completion_time = 0;
@@ -24,12 +39,13 @@ void create_jobs(Job jobs[], int n)
         jobs[i].waiting_time = 0;
         jobs[i].status = 0;
     }
+
+    return 1;
 }
 
 void display_jobs(Job jobs[], int n)
 {
     printf("\n========== JOB DETAILS ==========\n");
-
     printf("ID\tAT\tBT\tPriority\n");
 
     for(int i = 0; i < n; i++)
@@ -41,4 +57,3 @@ void display_jobs(Job jobs[], int n)
                jobs[i].priority);
     }
 }
-

@@ -1,39 +1,36 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <sys/resource.h>
 
 #include "resource.h"
+
 void run_resource_demo(void)
 {
-    struct rlimit limit;
+    struct rlimit original, updated, current;
 
     printf("\n========== RESOURCE MANAGEMENT DEMO ==========\n");
 
-    // Get current file descriptor limit
-    if(getrlimit(RLIMIT_NOFILE, &limit) == -1)
+    // Save original resource limits
+    if(getrlimit(RLIMIT_NOFILE, &original) == -1)
     {
         perror("getrlimit failed");
         return;
     }
 
-    printf("\nCurrent Resource Limits:\n");
+    printf("\nOriginal Resource Limits:\n");
     printf("Soft Limit: %llu\n",
-           (unsigned long long)limit.rlim_cur);
-
+           (unsigned long long)original.rlim_cur);
     printf("Hard Limit: %llu\n",
-           (unsigned long long)limit.rlim_max);
+           (unsigned long long)original.rlim_max);
 
-    // Set a lower soft limit without exceeding the hard limit
-    rlim_t new_limit = limit.rlim_cur;
+    // Reduce the soft limit to 64, if possible
+    updated = original;
 
-    if(new_limit > 64)
+    if(updated.rlim_cur > 64)
     {
-        new_limit = 64;
+        updated.rlim_cur = 64;
     }
 
-    limit.rlim_cur = new_limit;
-
-    if(setrlimit(RLIMIT_NOFILE, &limit) == -1)
+    if(setrlimit(RLIMIT_NOFILE, &updated) == -1)
     {
         perror("setrlimit failed");
         return;
@@ -41,8 +38,8 @@ void run_resource_demo(void)
 
     printf("\nResource limit updated successfully!\n");
 
-    // Verify updated resource limit
-    if(getrlimit(RLIMIT_NOFILE, &limit) == -1)
+    // Verify updated limit
+    if(getrlimit(RLIMIT_NOFILE, &current) == -1)
     {
         perror("getrlimit verification failed");
         return;
@@ -50,8 +47,16 @@ void run_resource_demo(void)
 
     printf("\nUpdated Resource Limits:\n");
     printf("Soft Limit: %llu\n",
-           (unsigned long long)limit.rlim_cur);
-
+           (unsigned long long)current.rlim_cur);
     printf("Hard Limit: %llu\n",
-           (unsigned long long)limit.rlim_max);
+           (unsigned long long)current.rlim_max);
+
+    // Restore original limits
+    if(setrlimit(RLIMIT_NOFILE, &original) == -1)
+    {
+        perror("Failed to restore original resource limit");
+        return;
+    }
+
+    printf("\nOriginal resource limits restored successfully!\n");
 }

@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 
 #include "process.h"
+
 void run_process_demo(void)
 {
     pid_t pid;
@@ -12,48 +13,76 @@ void run_process_demo(void)
 
     printf("\n========== PROCESS MANAGEMENT DEMO ==========\n");
 
-    // Create child process
-    pid = fork();
-
-    if(pid < 0)
+    // Run two test cases
+    for(int test = 0; test < 2; test++)
     {
-        perror("fork failed");
-        return;
-    }
+        printf("\n--- Test %d: %s ---\n",
+               test + 1,
+               test == 0 ? "Normal Execution" : "Simulated Failure");
 
-    // Child process
-    if(pid == 0)
-    {
-        printf("\nChild Process:\n");
-        printf("Child PID: %d\n", getpid());
-        printf("Parent PID: %d\n", getppid());
+        fflush(stdout);
 
-        printf("Child process executing successfully.\n");
+        pid = fork();
 
-        exit(0);
-    }
-
-    // Parent process
-    else
-    {
-        printf("\nParent Process:\n");
-        printf("Parent PID: %d\n", getpid());
-        printf("Created Child PID: %d\n", pid);
-
-        // Wait for child process
-        waitpid(pid, &status, 0);
-
-        if(WIFEXITED(status))
+        if(pid < 0)
         {
-            printf("\nChild exited with status: %d\n",
-                   WEXITSTATUS(status));
+            perror("fork failed");
+            return;
         }
+
+        // Child process
+        if(pid == 0)
+        {
+            printf("\nChild Process:\n");
+            printf("Child PID: %d\n", getpid());
+            printf("Parent PID: %d\n", getppid());
+
+            if(test == 0)
+            {
+                printf("Child process executing successfully.\n");
+                exit(EXIT_SUCCESS);
+            }
+            else
+            {
+                printf("Child process simulating a failure.\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        // Parent process
         else
         {
-            printf("\nChild terminated abnormally.\n");
+            printf("\nParent Process:\n");
+            printf("Parent PID: %d\n", getpid());
+            printf("Created Child PID: %d\n", pid);
+
+            if(waitpid(pid, &status, 0) == -1)
+            {
+                perror("waitpid failed");
+                return;
+            }
+
+            if(WIFEXITED(status))
+            {
+                int exit_status = WEXITSTATUS(status);
+
+                printf("\nChild exited with status: %d\n", exit_status);
+
+                if(exit_status == EXIT_SUCCESS)
+                {
+                    printf("Parent: Child completed successfully.\n");
+                }
+                else
+                {
+                    printf("Parent: Child failure detected!\n");
+                }
+            }
+            else
+            {
+                printf("\nChild terminated abnormally.\n");
+            }
         }
-
-        printf("Parent process completed successfully.\n");
     }
-}
 
+    printf("\nProcess management demo completed.\n");
+}
