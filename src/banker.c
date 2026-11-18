@@ -1,101 +1,85 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "banker.h"
-void run_bankers_demo(void)
+
+// Function to execute Banker's Safety Algorithm
+void check_safety(
+    int n,
+    int m,
+    int allocation[MAX_PROCESSES][MAX_RESOURCES],
+    int maximum[MAX_PROCESSES][MAX_RESOURCES],
+    int available[MAX_RESOURCES],
+    const char *test_name)
 {
-    int n = 5;
-    int m = 3;
-
-    int allocation[MAX_PROCESSES][MAX_RESOURCES] = {
-        {0, 1, 0},
-        {2, 0, 0},
-        {3, 0, 2},
-        {2, 1, 1},
-        {0, 0, 2}
-    };
-
-    int maximum[MAX_PROCESSES][MAX_RESOURCES] = {
-        {7, 5, 3},
-        {3, 2, 2},
-        {9, 0, 2},
-        {2, 2, 2},
-        {4, 3, 3}
-    };
-    int available[MAX_RESOURCES] = {3, 3, 2};
     int need[MAX_PROCESSES][MAX_RESOURCES];
-
     int work[MAX_RESOURCES];
     bool finish[MAX_PROCESSES] = {false};
-
     int safe_sequence[MAX_PROCESSES];
-
     int count = 0;
 
+    printf("\n========== %s ==========\n", test_name);
+
     // Calculate Need matrix
-    for(int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
-        for(int j = 0; j < m; j++)
+        for (int j = 0; j < m; j++)
         {
             need[i][j] = maximum[i][j] - allocation[i][j];
         }
     }
 
     // Copy Available into Work
-    for(int j = 0; j < m; j++)
+    for (int j = 0; j < m; j++)
     {
         work[j] = available[j];
     }
 
-    printf("\n========== BANKER'S ALGORITHM ==========\n");
-
-    // Safety Algorithm
-    while(count < n)
+    // Banker's Safety Algorithm
+    while (count < n)
     {
         bool found = false;
 
-        for(int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++)
         {
-            if(!finish[i])
+            if (!finish[i])
             {
                 int j;
 
-                for(j = 0; j < m; j++)
+                for (j = 0; j < m; j++)
                 {
-                    if(need[i][j] > work[j])
+                    if (need[i][j] > work[j])
                         break;
                 }
 
-                if(j == m)
+                if (j == m)
                 {
-                    for(int k = 0; k < m; k++)
+                    for (int k = 0; k < m; k++)
                     {
                         work[k] += allocation[i][k];
                     }
 
                     safe_sequence[count++] = i;
-
                     finish[i] = true;
                     found = true;
                 }
             }
         }
 
-        if(!found)
+        if (!found)
             break;
     }
 
     // Display result
-    if(count == n)
+    if (count == n)
     {
         printf("\nSystem is in SAFE state.\n");
-
         printf("Safe Sequence: ");
 
-        for(int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++)
         {
             printf("P%d", safe_sequence[i]);
 
-            if(i != n - 1)
+            if (i != n - 1)
                 printf(" -> ");
         }
 
@@ -106,66 +90,51 @@ void run_bankers_demo(void)
         printf("\nSystem is in UNSAFE state.\n");
         printf("No safe sequence exists.\n");
     }
-    // Second test: deliberately create an unsafe state
-    printf("\n--- UNSAFE STATE TEST ---\n");
+}
 
-    int unsafe_available[MAX_RESOURCES] = {0, 0, 0};
+// Main Banker's Algorithm demonstration
+void run_bankers_demo(void)
+{
+    int n = 5;
+    int m = 3;
 
-    // Reset the safety algorithm variables
-    count = 0;
+    // Allocation Matrix
+    int allocation[MAX_PROCESSES][MAX_RESOURCES] = {
+        {0, 1, 0},
+        {2, 0, 0},
+        {3, 0, 2},
+        {2, 1, 1},
+        {0, 0, 2}
+    };
 
-    for(int i = 0; i < n; i++)
-    {
-        finish[i] = false;
-    }
+    // Maximum Matrix
+    int maximum[MAX_PROCESSES][MAX_RESOURCES] = {
+        {7, 5, 3},
+        {3, 2, 2},
+        {9, 0, 2},
+        {2, 2, 2},
+        {4, 3, 3}
+    };
 
-    for(int j = 0; j < m; j++)
-    {
-        work[j] = unsafe_available[j];
-    }
+    // TEST 1: SAFE STATE
+    int available_safe[MAX_RESOURCES] = {3, 3, 2};
 
-    // Run safety algorithm again
-    while(count < n)
-    {
-        bool found = false;
+    check_safety(
+        n, m,
+        allocation,
+        maximum,
+        available_safe,
+        "BANKER'S SAFE STATE TEST"
+    );
 
-        for(int i = 0; i < n; i++)
-        {
-            if(!finish[i])
-            {
-                int j;
+    // TEST 2: UNSAFE STATE
+    int available_unsafe[MAX_RESOURCES] = {0, 0, 0};
 
-                for(j = 0; j < m; j++)
-                {
-                    if(need[i][j] > work[j])
-                        break;
-                }
-
-                if(j == m)
-                {
-                    for(int k = 0; k < m; k++)
-                    {
-                        work[k] += allocation[i][k];
-                    }
-
-                    safe_sequence[count++] = i;
-                    finish[i] = true;
-                    found = true;
-                }
-            }
-        }
-
-        if(!found)
-            break;
-    }
-
-    if(count == n)
-    {
-        printf("System is in SAFE state.\n");
-    }
-    else
-    {
-        printf("System is in UNSAFE state.\n");
-        printf("No safe sequence exists.\n");
-    }
+    check_safety(
+        n, m,
+        allocation,
+        maximum,
+        available_unsafe,
+        "BANKER'S UNSAFE STATE TEST"
+    );
 }

@@ -1,4 +1,5 @@
 campus
+campus_test
 *.o
 core
 core.*

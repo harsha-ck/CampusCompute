@@ -1,16 +1,24 @@
 #include <stdio.h>
 #include <sys/resource.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
 
 #include "resource.h"
 
 void run_resource_demo(void)
 {
-    struct rlimit original, updated, current;
+    struct rlimit original_limit;
+    struct rlimit limit;
+
+    int fd[64];
+    int count = 0;
+    int i;
 
     printf("\n========== RESOURCE MANAGEMENT DEMO ==========\n");
 
-    // Save original resource limits
-    if(getrlimit(RLIMIT_NOFILE, &original) == -1)
+    // Get original resource limit
+    if(getrlimit(RLIMIT_NOFILE, &original_limit) == -1)
     {
         perror("getrlimit failed");
         return;
@@ -18,19 +26,19 @@ void run_resource_demo(void)
 
     printf("\nOriginal Resource Limits:\n");
     printf("Soft Limit: %llu\n",
-           (unsigned long long)original.rlim_cur);
+           (unsigned long long)original_limit.rlim_cur);
     printf("Hard Limit: %llu\n",
-           (unsigned long long)original.rlim_max);
+           (unsigned long long)original_limit.rlim_max);
 
-    // Reduce the soft limit to 64, if possible
-    updated = original;
+    // Set a lower soft limit
+    limit = original_limit;
 
-    if(updated.rlim_cur > 64)
+    if(limit.rlim_cur > 64)
     {
-        updated.rlim_cur = 64;
+        limit.rlim_cur = 64;
     }
 
-    if(setrlimit(RLIMIT_NOFILE, &updated) == -1)
+    if(setrlimit(RLIMIT_NOFILE, &limit) == -1)
     {
         perror("setrlimit failed");
         return;
@@ -39,24 +47,60 @@ void run_resource_demo(void)
     printf("\nResource limit updated successfully!\n");
 
     // Verify updated limit
-    if(getrlimit(RLIMIT_NOFILE, &current) == -1)
+    if(getrlimit(RLIMIT_NOFILE, &limit) == -1)
     {
         perror("getrlimit verification failed");
+        setrlimit(RLIMIT_NOFILE, &original_limit);
         return;
     }
 
     printf("\nUpdated Resource Limits:\n");
     printf("Soft Limit: %llu\n",
-           (unsigned long long)current.rlim_cur);
+           (unsigned long long)limit.rlim_cur);
     printf("Hard Limit: %llu\n",
-           (unsigned long long)current.rlim_max);
+           (unsigned long long)limit.rlim_max);
 
-    // Restore original limits
-    if(setrlimit(RLIMIT_NOFILE, &original) == -1)
+    // Demonstrate the actual effect of the limit
+    printf("\nTesting file descriptor limit...\n");
+
+    while(count < 64)
+    {
+        fd[count] = open("/dev/null", O_RDONLY);
+
+        if(fd[count] == -1)
+        {
+            if(errno == EMFILE)
+            {
+                printf("\nResource limit reached!\n");
+                printf("Too many open files (EMFILE).\n");
+            }
+            else
+            {
+                perror("open failed");
+            }
+
+            break;
+        }
+
+        count++;
+    }
+
+    printf("Successfully opened file descriptors: %d\n", count);
+
+    // Close all opened file descriptors
+    for(i = 0; i < count; i++)
+    {
+        close(fd[i]);
+    }
+
+    printf("All opened file descriptors closed successfully.\n");
+
+    // Restore original resource limit
+    if(setrlimit(RLIMIT_NOFILE, &original_limit) == -1)
     {
         perror("Failed to restore original resource limit");
         return;
     }
 
-    printf("\nOriginal resource limits restored successfully!\n");
+    printf("Original resource limit restored successfully.\n");
 }
